@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PrayerCard } from '@/components/PrayerCard';
 import { prayers, deities, themes, Deity, Theme } from '@/data/prayers';
 import { cn } from '@/lib/utils';
@@ -12,7 +13,6 @@ export default function PrayerLibrary() {
   const [selectedDeity, setSelectedDeity] = useState<Deity | null>(null);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [kidFriendlyOnly, setKidFriendlyOnly] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
 
   const filteredPrayers = useMemo(() => {
     return prayers.filter(prayer => {
@@ -64,115 +64,85 @@ export default function PrayerLibrary() {
           </div>
 
           {/* Search bar */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search prayers, deities, themes..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                  onClick={() => setSearchQuery('')}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-            <Button
-              variant={showFilters ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => setShowFilters(!showFilters)}
-              className={cn(hasActiveFilters && !showFilters && "border-primary text-primary")}
-            >
-              <Filter className="h-4 w-4" />
-            </Button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search prayers, deities, themes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                onClick={() => setSearchQuery('')}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
 
-          {/* Filters */}
-          {showFilters && (
-            <div className="mt-4 space-y-4 animate-fade-in-up">
-              {/* Deity filter */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Deity
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {deities.map(deity => (
-                    <Badge
-                      key={deity}
-                      variant={selectedDeity === deity ? 'default' : 'outline'}
-                      className={cn(
-                        "cursor-pointer transition-all duration-200",
-                        selectedDeity === deity
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-primary/10"
-                      )}
-                      onClick={() => setSelectedDeity(selectedDeity === deity ? null : deity)}
-                    >
-                      {deity}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+          {/* Filters row */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {/* Deity dropdown */}
+            <Select
+              value={selectedDeity || "all"}
+              onValueChange={(value) => setSelectedDeity(value === "all" ? null : value as Deity)}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Deity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Deities</SelectItem>
+                {deities.map(deity => (
+                  <SelectItem key={deity} value={deity}>{deity}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-              {/* Theme filter */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Theme
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {themes.map(theme => (
-                    <Badge
-                      key={theme}
-                      variant={selectedTheme === theme ? 'default' : 'outline'}
-                      className={cn(
-                        "cursor-pointer transition-all duration-200",
-                        selectedTheme === theme
-                          ? "bg-secondary text-secondary-foreground"
-                          : "hover:bg-secondary/10"
-                      )}
-                      onClick={() => setSelectedTheme(selectedTheme === theme ? null : theme)}
-                    >
-                      {theme}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+            {/* Theme dropdown */}
+            <Select
+              value={selectedTheme || "all"}
+              onValueChange={(value) => setSelectedTheme(value === "all" ? null : value as Theme)}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Themes</SelectItem>
+                {themes.map(theme => (
+                  <SelectItem key={theme} value={theme}>{theme}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-              {/* Kid-friendly toggle */}
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant={kidFriendlyOnly ? 'default' : 'outline'}
-                  className={cn(
-                    "cursor-pointer transition-all duration-200",
-                    kidFriendlyOnly
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "hover:bg-green-50 hover:text-green-600 hover:border-green-200"
-                  )}
-                  onClick={() => setKidFriendlyOnly(!kidFriendlyOnly)}
-                >
-                  👶 Kid-friendly only (≤20 lines)
-                </Badge>
-                
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearFilters}
-                    className="text-muted-foreground"
-                  >
-                    Clear all
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
+            {/* Kid-friendly toggle */}
+            <Badge
+              variant={kidFriendlyOnly ? 'default' : 'outline'}
+              className={cn(
+                "cursor-pointer transition-all duration-200",
+                kidFriendlyOnly
+                  ? "bg-green-500 text-white hover:bg-green-600"
+                  : "hover:bg-green-50 hover:text-green-600 hover:border-green-200"
+              )}
+              onClick={() => setKidFriendlyOnly(!kidFriendlyOnly)}
+            >
+              👶 Kid-friendly
+            </Badge>
+            
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="text-muted-foreground"
+              >
+                Clear all
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -129,10 +129,10 @@ export function AudioPlayer({ audioUrl, onComplete, className }: AudioPlayerProp
           variant="ghost"
           size="icon"
           onClick={() => skip(-15)}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground relative"
         >
           <SkipBack className="h-5 w-5" />
-          <span className="absolute text-[8px] font-bold">15</span>
+          <span className="absolute -top-1 text-[8px] font-bold">15</span>
         </Button>
 
         {/* Play/Pause */}
@@ -154,10 +154,10 @@ export function AudioPlayer({ audioUrl, onComplete, className }: AudioPlayerProp
           variant="ghost"
           size="icon"
           onClick={() => skip(15)}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground relative"
         >
           <SkipForward className="h-5 w-5" />
-          <span className="absolute text-[8px] font-bold">15</span>
+          <span className="absolute -top-1 text-[8px] font-bold">15</span>
         </Button>
 
         {/* Speed control */}
