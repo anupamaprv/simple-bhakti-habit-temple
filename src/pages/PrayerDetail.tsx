@@ -103,7 +103,7 @@ export default function PrayerDetail() {
         <Card>
           <CardContent className="p-4">
             <h3 className="font-serif font-semibold text-sm text-muted-foreground mb-4">
-              Listen & Follow Along
+              Audio
             </h3>
             <AudioPlayer audioUrl={prayer.audioUrl} onComplete={handleComplete} />
           </CardContent>
