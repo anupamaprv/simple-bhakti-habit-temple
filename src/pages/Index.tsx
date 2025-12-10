@@ -1,14 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
+import PrayerLibrary from './PrayerLibrary';
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-warm">
+        <div className="text-center animate-pulse">
+          <div className="w-16 h-16 rounded-full gradient-temple mx-auto mb-4 flex items-center justify-center">
+            <span className="text-2xl">🙏</span>
+          </div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <PrayerLibrary />;
 };
 
 export default Index;
