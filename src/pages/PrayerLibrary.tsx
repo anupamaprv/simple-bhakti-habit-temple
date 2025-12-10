@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PrayerCard } from '@/components/PrayerCard';
 import { prayers, deities, themes, Deity, Theme } from '@/data/prayers';
 import { cn } from '@/lib/utils';
+import sbLogo from '@/assets/sb-logo.jpg';
 
 export default function PrayerLibrary() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,9 +56,7 @@ export default function PrayerLibrary() {
         <div className="container mx-auto px-4 py-4">
           {/* Title for mobile */}
           <div className="flex items-center justify-center gap-2 mb-4 md:hidden">
-            <div className="w-8 h-8 rounded-full gradient-temple flex items-center justify-center">
-              <span className="text-primary-foreground text-sm">🙏</span>
-            </div>
+            <img src={sbLogo} alt="Simple Bhakti" className="w-8 h-8 rounded-full object-cover" />
             <h1 className="font-serif text-xl font-bold text-gradient-temple">
               Simple Bhakti
             </h1>

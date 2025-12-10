@@ -3,6 +3,7 @@ import { Book, Flame, Award, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import sbLogo from '@/assets/sb-logo.jpg';
 
 export function Navigation() {
   const location = useLocation();
@@ -22,9 +23,7 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo - visible on desktop */}
           <Link to="/" className="hidden md:flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full gradient-temple flex items-center justify-center">
-              <span className="text-primary-foreground text-xl">🙏</span>
-            </div>
+            <img src={sbLogo} alt="Simple Bhakti" className="w-10 h-10 rounded-full object-cover" />
             <span className="font-serif text-xl font-bold text-gradient-temple">
               Simple Bhakti
             </span>
