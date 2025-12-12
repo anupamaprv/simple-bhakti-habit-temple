@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import PrayerDetail from "./pages/PrayerDetail";
 import Tracker from "./pages/Tracker";
 import Badges from "./pages/Badges";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ function AppContent() {
         <Route path="/prayer/:id" element={<PrayerDetail />} />
         <Route path="/tracker" element={<Tracker />} />
         <Route path="/badges" element={<Badges />} />
+        <Route path="/support" element={<Support />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
