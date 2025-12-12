@@ -7,7 +7,7 @@ import sbLogo from '@/assets/sb-logo.jpg';
 
 export function Navigation() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Prayers', icon: Book },
@@ -64,7 +64,7 @@ export function Navigation() {
           {/* User section - visible on desktop only */}
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{user.name}</span>
+              <span>{profile?.name || 'User'}</span>
             </div>
           </div>
         </div>

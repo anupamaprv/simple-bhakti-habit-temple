@@ -8,7 +8,7 @@ import { LogOut } from 'lucide-react';
 
 export default function Tracker() {
   const { stats } = usePrayer();
-  const { user, logout } = useAuth();
+  const { profile, logout } = useAuth();
 
   return (
     <div className="min-h-screen pb-20 md:pb-8 md:pt-24">
@@ -17,7 +17,7 @@ export default function Tracker() {
         <div className="container mx-auto px-4 py-8 md:py-12">
           {/* Mobile user section */}
           <div className="flex items-center justify-between mb-6 md:hidden">
-            <span className="text-sm opacity-90">Hi, {user?.name}</span>
+            <span className="text-sm opacity-90">Hi, {profile?.name || 'there'}</span>
             <Button
               variant="ghost"
               size="sm"
