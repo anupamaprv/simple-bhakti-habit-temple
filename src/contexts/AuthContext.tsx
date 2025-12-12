@@ -1,84 +1,154 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
 
-interface User {
+interface Profile {
   id: string;
-  email: string;
+  user_id: string;
   name: string;
+  email: string;
+  requires_password_change: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
+  profile: Profile | null;
+  session: Session | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for stored user on mount
-    const storedUser = localStorage.getItem('simple-bhakti-user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return null;
     }
-    setIsLoading(false);
+    return data as Profile | null;
+  };
+
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Defer profile fetch with setTimeout to prevent deadlock
+        if (session?.user) {
+          setTimeout(() => {
+            fetchProfile(session.user.id).then(setProfile);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id).then(setProfile);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simulated login - in real app, this would call an API
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     
-    const storedUsers = JSON.parse(localStorage.getItem('simple-bhakti-users') || '[]');
-    const foundUser = storedUsers.find((u: User & { password: string }) => 
-      u.email === email && u.password === password
-    );
-    
-    if (!foundUser) {
-      throw new Error('Invalid email or password');
+    if (error) {
+      throw new Error(error.message);
     }
-    
-    const { password: _, ...userWithoutPassword } = foundUser;
-    setUser(userWithoutPassword);
-    localStorage.setItem('simple-bhakti-user', JSON.stringify(userWithoutPassword));
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    // Simulated signup - in real app, this would call an API
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const redirectUrl = `${window.location.origin}/`;
     
-    const storedUsers = JSON.parse(localStorage.getItem('simple-bhakti-users') || '[]');
-    
-    if (storedUsers.some((u: User) => u.email === email)) {
-      throw new Error('Email already exists');
-    }
-    
-    const newUser = {
-      id: Date.now().toString(),
+    const { error } = await supabase.auth.signUp({
       email,
       password,
-      name,
-    };
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          name: name,
+        },
+      },
+    });
     
-    storedUsers.push(newUser);
-    localStorage.setItem('simple-bhakti-users', JSON.stringify(storedUsers));
-    
-    const { password: _, ...userWithoutPassword } = newUser;
-    setUser(userWithoutPassword);
-    localStorage.setItem('simple-bhakti-user', JSON.stringify(userWithoutPassword));
+    if (error) {
+      throw new Error(error.message);
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw new Error(error.message);
+    }
     setUser(null);
-    localStorage.removeItem('simple-bhakti-user');
+    setProfile(null);
+    setSession(null);
+  };
+
+  const resetPassword = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/auth?reset=true`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
+    });
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    
+    if (error) {
+      throw new Error(error.message);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      profile, 
+      session, 
+      isLoading, 
+      login, 
+      signup, 
+      logout, 
+      resetPassword, 
+      updatePassword 
+    }}>
       {children}
     </AuthContext.Provider>
   );
