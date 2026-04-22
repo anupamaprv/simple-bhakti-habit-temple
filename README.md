@@ -1,5 +1,6 @@
 # 🕉️ Building a Habit-Driven Hindu Prayer App  
-### Turning Spiritual Intent into Daily Engagement
+### Simple Bhakti — A Multilingual Hindu Prayer App with Habit Tracking
+Simple Bhakti is a lightweight prayer and habit-tracking app designed to make it easier for families to build and sustain a daily spiritual practice—especially across languages and generations.
 
 > Built as a product case study to explore how habit design and gamification can improve consistency in spiritual practices.
 
@@ -21,12 +22,11 @@ Unlike traditional prayer apps that focus on content, this app focuses on **beha
 
 ## 🎯 Problem
 
-Most users start spiritual routines with good intent but struggle with consistency.
-
-Existing apps:
-- Act as static content libraries  
-- Lack engagement loops  
-- Offer limited language accessibility  
+As a parent teaching my daughter Hindu prayers, I ran into a surprisingly fragmented experience:
+- Prayers and lyrics were scattered across multiple websites
+- No easy way to track consistency or build a habit
+- Transliteration issues made pronunciation difficult (especially for Hindi/Tamil)
+- No simple, structured app designed for young learners and busy parents
 
 👉 Result: High drop-off, low habit formation
 
@@ -34,13 +34,13 @@ Existing apps:
 
 ## 💡 Solution
 
-Reframe prayer as a **habit system**, not a content experience.
+I built Simple Bhakti to bring structure, consistency, and accessibility into one place:
+- Reframe prayer as a **habit system**, not a content experience.
+- 📖 Multilingual prayer library (English, Hindi, Tamil, Telugu)
+- 🔁 Habit tracking + streaks to build consistency.   
+- 🏅 Gamified badges to keep engagement high (especially for kids). Reinforcement loops (streaks, badges)
+- 🧭 Simple, distraction-free UI designed for daily use
 
-This app introduces:
-- Structured daily engagement  
-- Reinforcement loops (streaks, badges)  
-- Accessible, multilingual prayer content  
-- Audio support for guided experience  
 
 ---
 
@@ -79,23 +79,25 @@ This app introduces:
 👉 Built with a scalable structure to add more languages  
 
 ---
+ ## ⚠️Key Product Lessons & Tradeoffs
 
-### 🔊 Custom Audio (Copyright-Aware)
-- Self-recorded chants  
-- Replaced placeholder audio due to licensing constraints  
+**Content accuracy matters deeply:**
 
-👉 Tradeoff:  
-Lower production quality vs **zero legal risk + authenticity**
+Early versions generated synthetic (“AI-like”) prayers that were structurally correct but culturally inaccurate. I rebuilt the library using verified sources and personal prayer books to ensure authenticity.
+
+
+**Audio licensing constraints:**
+
+Attempted to integrate audio via YouTube and other sources, but ran into copyright limitations. A partial workaround involved recording chants internally; full audio support is planned as a future enhancement.
+
+
+**Multilingual UX is non-trivial:**
+
+Transliteration and script rendering required careful handling to preserve meaning and pronunciation.
 
 ---
 
-## ⚖️ Key Product Decisions
 
-### 🎵 Copyright vs Experience
-- Avoided licensed chant audio  
-- Built custom recordings  
-
----
 
 ### 🎯 Engagement vs Spiritual Integrity
 - Used light gamification  
